@@ -16,10 +16,16 @@ class WebViewScreen extends StatefulWidget {
 
 class _WebViewScreenState extends State<WebViewScreen> {
   late final WebViewController controller;
+  bool showWebView = false;
 
   @override
   void initState() {
     super.initState();
+    Future.delayed(const Duration(seconds: 2), () {
+      setState(() {
+        showWebView = true;
+      });
+    });
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(statusBarColor: Constants.mainColor),
     );
@@ -56,13 +62,29 @@ class _WebViewScreenState extends State<WebViewScreen> {
       },
       child: SafeArea(
         child: Scaffold(
-          body: WebViewWidget(
-            controller: controller,
-            gestureRecognizers: {
-              Factory<OneSequenceGestureRecognizer>(
-                () => EagerGestureRecognizer(),
+          body: Stack(
+            children: [
+              Visibility(
+                visible: !showWebView,
+                child: Container(
+                  color: Colors.white,
+                  child: Center(
+                    child: Image.asset("assets/splash_logo.JPG"),
+                  ),
+                ),
               ),
-            },
+              Visibility(
+                visible: showWebView,
+                child: WebViewWidget(
+                  controller: controller,
+                  gestureRecognizers: {
+                    Factory<OneSequenceGestureRecognizer>(
+                      () => EagerGestureRecognizer(),
+                    ),
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),
